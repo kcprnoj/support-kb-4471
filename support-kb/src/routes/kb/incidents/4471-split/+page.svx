@@ -11,6 +11,11 @@ signature: Kacper Nojszewski
   import ThreeCauseTable from '#lib/kb/ThreeCauseTable.svelte';
   import Callout from '#lib/kb/Callout.svelte';
   import RenderStamp from '#lib/kb/RenderStamp.svelte';
+
+  // mdsvex lands frontmatter on the page's `metadata` export (see KbIndex.svelte), not as
+  // bare bindings in this script's scope — so `signature` needs its own local const here,
+  // matching the frontmatter above, for <RenderStamp {signature} /> to resolve at all.
+  const signature = 'Kacper Nojszewski';
 </script>
 
 [#4471](/kb/incidents/4471) merged 412 reports and was marked known: one cause, the shared
