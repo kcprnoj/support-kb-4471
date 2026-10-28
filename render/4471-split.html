@@ -136,17 +136,20 @@
 
     <h2>Where each one went</h2>
     <ul>
-      <li><strong>parser</strong> (379, the desk's own count) — the fix already queued against
-        #4471. Filed as its own issue:
+      <li><strong>parser</strong> (379, the desk's own count) — filed as
         <a href="https://github.com/kcprnoj/support-kb-4471/issues/1">kcprnoj/support-kb-4471#1</a>.
-        5 of these 379 are the one-day problem below; the parser fix will not touch them.</li>
-      <li><strong>hint</strong> (33, the desk's own count) — booking-v3's date hint mismatches
-        day-first tenants on the <code>form</code> channel. Unticketed before now:
-        <a href="https://github.com/kcprnoj/support-kb-4471/issues/2">kcprnoj/support-kb-4471#2</a>.</li>
+        The desk's engineering update on #4471 (closed 5 Oct) confirms it:
+        <code>fix(dates): parse dd/mm for eu locales</code>. <strong>Closed, fixed.</strong></li>
+      <li><strong>hint</strong> (33, the desk's own count) — filed as
+        <a href="https://github.com/kcprnoj/support-kb-4471/issues/2">kcprnoj/support-kb-4471#2</a>.
+        The same update marks it <strong>won't fix: booking-v3 form retired</strong> — the
+        tenants that hit this no longer run that form, so it can't recur.
+        <strong>Closed, won't fix.</strong></li>
       <li><strong>one-day move</strong> (5, named by the desk's own <code>oneDayMove</code>
-        note) — a one-day difference, not a swap. Filed on its own instead of staying a
-        footnote:
-        <a href="https://github.com/kcprnoj/support-kb-4471/issues/3">kcprnoj/support-kb-4471#3</a>.</li>
+        note, a subset of the 379 above) — filed as
+        <a href="https://github.com/kcprnoj/support-kb-4471/issues/3">kcprnoj/support-kb-4471#3</a>.
+        The engineering update doesn't mention it at all — it was never part of either known
+        cause. <strong>Still open.</strong></li>
     </ul>
 
     <h2>Lessons</h2>
@@ -157,7 +160,7 @@
         export.</li>
     </ul>
 
-    <p class="stamp">desk ref <b>DR-MMSN-MB40</b></p>
+    <p class="stamp">desk ref <b>DR-TTZ1-PQB9</b></p>
   </main>
   <footer>Pages are written by people. Tables and charts are built from data at render time.</footer>
 </div>

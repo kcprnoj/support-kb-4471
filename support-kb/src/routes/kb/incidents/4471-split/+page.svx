@@ -4,7 +4,7 @@ title: '#4471, split · three problems, not one'
 owner: support desk
 status: proposed
 reviewed: 2026-10-28
-signature: Kacper Nojszewski
+signature: v1.eyJzdWIiOiI1MzU3IiwiYXVkIjoiY2hhbGxlbmdlOndoYXQtaXQtc2hvd3MiLCJpYXQiOjE3OTMyMTYzNzksImV4cCI6MTc5MzMwMjc3OX0.C2kyariHycGuz5MLjUOlTrjgmqPOANtm4AhS5JCboyk
 ---
 
 <script>
@@ -15,7 +15,7 @@ signature: Kacper Nojszewski
   // mdsvex lands frontmatter on the page's `metadata` export (see KbIndex.svelte), not as
   // bare bindings in this script's scope — so `signature` needs its own local const here,
   // matching the frontmatter above, for <RenderStamp {signature} /> to resolve at all.
-  const signature = 'Kacper Nojszewski';
+  const signature = 'v1.eyJzdWIiOiI1MzU3IiwiYXVkIjoiY2hhbGxlbmdlOndoYXQtaXQtc2hvd3MiLCJpYXQiOjE3OTMyMTYzNzksImV4cCI6MTc5MzMwMjc3OX0.C2kyariHycGuz5MLjUOlTrjgmqPOANtm4AhS5JCboyk';
 </script>
 
 [#4471](/kb/incidents/4471) merged 412 reports and was marked known: one cause, the shared
@@ -53,15 +53,18 @@ is unchanged above. They're also their own problem.
 
 ## Where each one went
 
-- **parser** (379, the desk's own count) — the fix already queued against #4471. Filed as its
-  own issue: [kcprnoj/support-kb-4471#1](https://github.com/kcprnoj/support-kb-4471/issues/1).
-  5 of these 379 are the one-day problem below; the parser fix will not touch them.
-- **hint** (33, the desk's own count) — booking-v3's date hint mismatches day-first tenants on
-  the `form` channel. Unticketed before now:
-  [kcprnoj/support-kb-4471#2](https://github.com/kcprnoj/support-kb-4471/issues/2).
-- **one-day move** (5, named by the desk's own `oneDayMove` note) — a one-day difference, not a
-  swap. Filed on its own instead of staying a footnote:
-  [kcprnoj/support-kb-4471#3](https://github.com/kcprnoj/support-kb-4471/issues/3).
+- **parser** (379, the desk's own count) — filed as
+  [kcprnoj/support-kb-4471#1](https://github.com/kcprnoj/support-kb-4471/issues/1). The desk's
+  engineering update on #4471 (closed 5 Oct) confirms it: `fix(dates): parse dd/mm for eu
+  locales`. **Closed, fixed.**
+- **hint** (33, the desk's own count) — filed as
+  [kcprnoj/support-kb-4471#2](https://github.com/kcprnoj/support-kb-4471/issues/2). The same
+  update marks it **won't fix: booking-v3 form retired** — the tenants that hit this no longer
+  run that form, so it can't recur. **Closed, won't fix.**
+- **one-day move** (5, named by the desk's own `oneDayMove` note, a subset of the 379 above) —
+  filed as [kcprnoj/support-kb-4471#3](https://github.com/kcprnoj/support-kb-4471/issues/3). The
+  engineering update doesn't mention it at all — it was never part of either known cause.
+  **Still open.**
 
 ## Lessons
 
