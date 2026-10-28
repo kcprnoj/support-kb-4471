@@ -8,7 +8,7 @@ signature: Kacper Nojszewski
 ---
 
 <script>
-  import ThreeCauseTable from '#lib/kb/ThreeCauseTable.svelte';
+  import CauseTable from '#lib/kb/CauseTable.svelte';
   import Callout from '#lib/kb/Callout.svelte';
   import RenderStamp from '#lib/kb/RenderStamp.svelte';
 
@@ -19,37 +19,54 @@ signature: Kacper Nojszewski
 </script>
 
 [#4471](/kb/incidents/4471) merged 412 reports and was marked known: one cause, the shared
-parser, fix queued. [CauseTable](/kb/incidents/4471) already shows a second cause, `hint`,
-living in the same ticket with no ticket of its own. Checking the 412 reports' own text against
-that split — not against either cause's definition — turns up a third: 5 reports that describe
-a plain one-day difference, which a day/month swap can never produce.
+parser, fix queued. Its own [CauseTable](/kb/incidents/4471) — unchanged below, the desk's own
+counts, as exported — already shows a second cause, `hint`, living in the same ticket with no
+ticket of its own. It also already prints a note most people skim past.
+
+<CauseTable ticket={4471} />
 
 <Callout kind="warn">
-Three problems were merged into one ticket because [decision 0001](/kb/decisions/0001-dedupe-by-subject)
-merges on subject line. "Wrong day on the invite" and "Date is wrong" describe three different
-bugs that all produce the same sentence.
+Three problems were merged into one ticket because
+[decision 0001](/kb/decisions/0001-dedupe-by-subject) merges on subject line. "Wrong day on the
+invite" and "Date is wrong" describe three different bugs that all produce the same sentence.
 </Callout>
 
-## The real split
+## The note above the table doesn't say
 
-<ThreeCauseTable ticket={4471} />
+Read the note under the `parser` row again: **5 reports read as a one-day move; filed under
+`parser` by tenant.** That is the desk's own code, from this export, saying these 5 reports
+don't actually fit the cause they're filed under. A day/month swap can never move a date by
+exactly one day — 07/04 ↔ 04/07 is 88 days, not 1 — so whatever is wrong with these 5, it is not
+the parser bug, and it is not the hint bug either (none of them came in on the `form` channel).
+Checked against the full text of all 412 reports, not against the desk's list, the same 5 are
+the only ones this is true for:
+
+- `R-41202` (kettle.books, email): "Invite says Tuesday 12 May. Calendar says Monday 11 May."
+- `R-41209` (alder.physio, app): "Every booking in June is one day off. Only June."
+- `R-41236` (nine.lanterns, app): "The invite arrived before I made the booking."
+- `R-41344` (pale.harbour, email): "Client in Lisbon got Tuesday. Client in Toronto got Monday.
+  Same meeting. We held it twice."
+- `R-41620` (lantern.row, email): "Tuesday 6 October showed as Monday."
+
+They're still inside the 379 the table shows for `parser` — the desk's own count, as exported,
+is unchanged above. They're also their own problem.
 
 ## Where each one went
 
-- **parser** (374) — the parser fix already queued against #4471. Filed as its own issue:
-  [kcprnoj/support-kb-4471#1](https://github.com/kcprnoj/support-kb-4471/issues/1).
-- **hint** (33) — booking-v3's date hint mismatches day-first tenants on the `form` channel.
-  Unticketed before now: [kcprnoj/support-kb-4471#2](https://github.com/kcprnoj/support-kb-4471/issues/2).
-- **drift** (5) — a one-day difference, not a swap. The desk's own `oneDayMove` note in
-  `desk-notes.json` already named these 5 reports; nobody gave them a ticket.
+- **parser** (379, the desk's own count) — the fix already queued against #4471. Filed as its
+  own issue: [kcprnoj/support-kb-4471#1](https://github.com/kcprnoj/support-kb-4471/issues/1).
+  5 of these 379 are the one-day problem below; the parser fix will not touch them.
+- **hint** (33, the desk's own count) — booking-v3's date hint mismatches day-first tenants on
+  the `form` channel. Unticketed before now:
+  [kcprnoj/support-kb-4471#2](https://github.com/kcprnoj/support-kb-4471/issues/2).
+- **one-day move** (5, named by the desk's own `oneDayMove` note) — a one-day difference, not a
+  swap. Filed on its own instead of staying a footnote:
   [kcprnoj/support-kb-4471#3](https://github.com/kcprnoj/support-kb-4471/issues/3).
 
 ## Lessons
 
-- Dedupe by subject merges by what a report *sounds like*, not by what caused it. Two bugs with
-  the same symptom will share a ticket until someone checks the cause, not just the count.
-- A desk note that says "these read differently" and files them anyway is a problem waiting for
-  a ticket, not a resolved footnote.
-- 374 + 33 + 5 = 412. The original ticket's count was right; its one-cause story wasn't.
+- Dedupe by subject merges by what a report *sounds like*, not by what caused it.
+- A note that says "these read differently" and files them anyway is a problem waiting for a
+  ticket, not a resolved footnote — the data to find it was already in the export.
 
 <RenderStamp {signature} />

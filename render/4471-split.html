@@ -35,9 +35,12 @@
   .stamp { margin: 2rem 0 0; font: 0.85rem var(--mono); color: var(--muted); }
   .stamp b { color: var(--accent); letter-spacing: 0.04em; }
 
-  /* ThreeCauseTable.svelte */
+  /* CauseTable.svelte */
   .sum { font-size: 1.1rem; }
+  .tags { color: var(--muted); font-size: 0.85em; }
   .note { color: var(--muted); font-size: 0.85em; }
+  .wrong td { background: var(--warn-bg); }
+  .wrong td:last-child { color: var(--warn); font-weight: 600; }
 
   .render-note { max-width: 760px; margin: 0 auto; padding: 0.75rem 16px 0; font-size: 0.8rem; color: var(--muted); border-bottom: 1px dashed var(--line); }
 </style>
@@ -46,10 +49,11 @@
 
 <p class="render-note">
   Hand-rendered reproduction of <code>support-kb/src/routes/kb/incidents/4471-split/+page.svx</code>
-  through <code>runbook.svelte</code> + <code>ThreeCauseTable.svelte</code> — the export ships no
-  build tooling, so this reproduces the real layout CSS and component markup by hand, using the
-  numbers <code>ThreeCauseTable</code> computes from the actual data files. No visual content was
-  invented: every class, color token and markup shape is copied from the source files in this repo.
+  through <code>runbook.svelte</code> + the desk's own <code>CauseTable.svelte</code> — the export
+  ships no build tooling, so this reproduces the real layout CSS and component markup by hand.
+  The table below is the desk's existing, unmodified counts for #4471 (computed by
+  <code>CauseTable</code>/<code>causes.ts</code> from the real data files) — nothing here was
+  recomputed or adjusted.
 </p>
 
 <div class="kb">
@@ -65,12 +69,36 @@
   <main>
     <p>
       <a href="/kb/incidents/4471">#4471</a> merged 412 reports and was marked known: one cause,
-      the shared parser, fix queued. <a href="/kb/incidents/4471">CauseTable</a> already shows a
-      second cause, <code>hint</code>, living in the same ticket with no ticket of its own.
-      Checking the 412 reports' own text against that split — not against either cause's
-      definition — turns up a third: 5 reports that describe a plain one-day difference, which a
-      day/month swap can never produce.
+      the shared parser, fix queued. Its own
+      <a href="/kb/incidents/4471">CauseTable</a> — unchanged below, the desk's own counts, as
+      exported — already shows a second cause, <code>hint</code>, living in the same ticket with
+      no ticket of its own. It also already prints a note most people skim past.
     </p>
+
+    <!-- CauseTable ticket={4471}, the desk's existing component, exact output -->
+    <p class="sum"><strong>412</strong> reports merged into #4471 · <strong>2</strong> causes</p>
+    <table>
+      <thead><tr><th>cause</th><th>reports</th><th>tagged as</th><th>tenants</th><th>seen</th><th></th></tr></thead>
+      <tbody>
+        <tr>
+          <td><code>parser</code></td>
+          <td>379</td>
+          <td class="tags">parser ×356 · hint ×23</td>
+          <td>11</td>
+          <td>2026-04-01 → 2026-10-04</td>
+          <td>#4471</td>
+        </tr>
+        <tr class="wrong">
+          <td><code>hint</code></td>
+          <td>33</td>
+          <td class="tags">hint ×18 · parser ×15</td>
+          <td>3</td>
+          <td>2026-04-17 → 2026-09-22</td>
+          <td>not this ticket — no ticket of its own</td>
+        </tr>
+      </tbody>
+    </table>
+    <p class="note">5 reports read as a one-day move; filed under <code>parser</code> by tenant.</p>
 
     <aside class="warn">
       Three problems were merged into one ticket because
@@ -79,49 +107,54 @@
       different bugs that all produce the same sentence.
     </aside>
 
-    <h2>The real split</h2>
-
-    <p class="sum"><strong>412</strong> reports merged into #4471 · <strong>3</strong> real causes, not one</p>
-    <table>
-      <thead><tr><th>cause</th><th>reports</th><th>tenants</th><th>seen</th><th>ticket</th></tr></thead>
-      <tbody>
-        <tr>
-          <td><code>parser</code> — shared parser reads month-first</td>
-          <td>374</td><td>11</td><td>2026-04-01 → 2026-10-04</td><td>its own issue</td>
-        </tr>
-        <tr>
-          <td><code>hint</code> — booking-v3's hint mismatches a day-first tenant</td>
-          <td>33</td><td>3</td><td>2026-04-17 → 2026-09-22</td><td>its own issue</td>
-        </tr>
-        <tr>
-          <td><code>drift</code> — one-day difference, not a day/month swap</td>
-          <td>5</td><td>5</td><td>2026-04-02 → 2026-10-04</td><td>its own issue</td>
-        </tr>
-      </tbody>
-    </table>
-    <p class="note">374 + 33 + 5 = 412. Every report counted once, in exactly one cause.</p>
+    <h2>The note above the table doesn't say</h2>
+    <p>
+      Read the note under the <code>parser</code> row again: <strong>5 reports read as a
+      one-day move; filed under <code>parser</code> by tenant.</strong> That is the desk's own
+      code, from this export, saying these 5 reports don't actually fit the cause they're filed
+      under. A day/month swap can never move a date by exactly one day — 07/04 ↔ 04/07 is 88
+      days, not 1 — so whatever is wrong with these 5, it is not the parser bug, and it is not
+      the hint bug either (none of them came in on the <code>form</code> channel). Checked
+      against the full text of all 412 reports, not against the desk's list, the same 5 are the
+      only ones this is true for:
+    </p>
+    <ul>
+      <li><code>R-41202</code> (kettle.books, email): "Invite says Tuesday 12 May. Calendar says
+        Monday 11 May."</li>
+      <li><code>R-41209</code> (alder.physio, app): "Every booking in June is one day off. Only
+        June."</li>
+      <li><code>R-41236</code> (nine.lanterns, app): "The invite arrived before I made the
+        booking."</li>
+      <li><code>R-41344</code> (pale.harbour, email): "Client in Lisbon got Tuesday. Client in
+        Toronto got Monday. Same meeting. We held it twice."</li>
+      <li><code>R-41620</code> (lantern.row, email): "Tuesday 6 October showed as Monday."</li>
+    </ul>
+    <p>
+      They're still inside the 379 the table shows for <code>parser</code> — the desk's own
+      count, as exported, is unchanged above. They're also their own problem.
+    </p>
 
     <h2>Where each one went</h2>
     <ul>
-      <li><strong>parser</strong> (374) — the parser fix already queued against #4471. Filed as
-        its own issue: <a href="https://github.com/kcprnoj/support-kb-4471/issues/1">kcprnoj/support-kb-4471#1</a>.</li>
-      <li><strong>hint</strong> (33) — booking-v3's date hint mismatches day-first tenants on the
-        <code>form</code> channel. Unticketed before now:
+      <li><strong>parser</strong> (379, the desk's own count) — the fix already queued against
+        #4471. Filed as its own issue:
+        <a href="https://github.com/kcprnoj/support-kb-4471/issues/1">kcprnoj/support-kb-4471#1</a>.
+        5 of these 379 are the one-day problem below; the parser fix will not touch them.</li>
+      <li><strong>hint</strong> (33, the desk's own count) — booking-v3's date hint mismatches
+        day-first tenants on the <code>form</code> channel. Unticketed before now:
         <a href="https://github.com/kcprnoj/support-kb-4471/issues/2">kcprnoj/support-kb-4471#2</a>.</li>
-      <li><strong>drift</strong> (5) — a one-day difference, not a swap. The desk's own
-        <code>oneDayMove</code> note in <code>desk-notes.json</code> already named these 5
-        reports; nobody gave them a ticket.
+      <li><strong>one-day move</strong> (5, named by the desk's own <code>oneDayMove</code>
+        note) — a one-day difference, not a swap. Filed on its own instead of staying a
+        footnote:
         <a href="https://github.com/kcprnoj/support-kb-4471/issues/3">kcprnoj/support-kb-4471#3</a>.</li>
     </ul>
 
     <h2>Lessons</h2>
     <ul>
-      <li>Dedupe by subject merges by what a report <em>sounds like</em>, not by what caused it.
-        Two bugs with the same symptom will share a ticket until someone checks the cause, not
-        just the count.</li>
-      <li>A desk note that says "these read differently" and files them anyway is a problem
-        waiting for a ticket, not a resolved footnote.</li>
-      <li>374 + 33 + 5 = 412. The original ticket's count was right; its one-cause story wasn't.</li>
+      <li>Dedupe by subject merges by what a report <em>sounds like</em>, not by what caused it.</li>
+      <li>A note that says "these read differently" and files them anyway is a problem waiting
+        for a ticket, not a resolved footnote — the data to find it was already in the
+        export.</li>
     </ul>
 
     <p class="stamp">desk ref <b>DR-MMSN-MB40</b></p>
