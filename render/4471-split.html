@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>#4471, split · three problems, not one · support kb</title>
+<style>
+  :root {
+    --bg: #fbfaf7; --fg: #1d1d1b; --muted: #6b6a66; --line: #e3e0d8;
+    --accent: #2f6f5e; --warn: #b4501f; --warn-bg: #fbeee6; --note-bg: #eef5f2;
+    --mono: ui-monospace, 'Cascadia Code', Menlo, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #171716; --fg: #ecebe6; --muted: #9c9a93; --line: #34332f;
+      --accent: #6fbfa6; --warn: #f0905d; --warn-bg: #3a2418; --note-bg: #1d2c27;
+    }
+  }
+  body { margin: 0; background: var(--bg); color: var(--fg); font: 16px/1.6 system-ui, sans-serif; }
+  .kb table { border-collapse: collapse; width: 100%; margin: 1rem 0; font-size: 0.92rem; }
+  .kb th, .kb td { border-bottom: 1px solid var(--line); padding: 0.35rem 0.5rem; text-align: left; }
+  .kb code { font-family: var(--mono); font-size: 0.88em; }
+  .kb a { color: var(--accent); }
+  .kb { max-width: 760px; margin: 0 auto; padding: 2rem 16px 4rem; }
+  .crumb { font: 0.8rem var(--mono); text-decoration: none; color: var(--muted); }
+  h1 { margin: 0.25rem 0 0.5rem; line-height: 1.2; }
+  .meta { display: flex; flex-wrap: wrap; gap: 0.5rem 1rem; color: var(--muted); font-size: 0.85rem; margin: 0; }
+  .status { border: 1px solid var(--line); border-radius: 99px; padding: 0 0.6rem; }
+  footer { margin-top: 3rem; color: var(--muted); font-size: 0.8rem; border-top: 1px solid var(--line); padding-top: 1rem; }
+
+  /* Callout.svelte */
+  aside { border-left: 4px solid var(--accent); padding: 0.5rem 1rem; margin: 1rem 0; background: var(--note-bg); }
+  aside.warn { border-color: var(--warn); background: var(--warn-bg); }
+
+  /* RenderStamp.svelte */
+  .stamp { margin: 2rem 0 0; font: 0.85rem var(--mono); color: var(--muted); }
+  .stamp b { color: var(--accent); letter-spacing: 0.04em; }
+
+  /* ThreeCauseTable.svelte */
+  .sum { font-size: 1.1rem; }
+  .note { color: var(--muted); font-size: 0.85em; }
+
+  .render-note { max-width: 760px; margin: 0 auto; padding: 0.75rem 16px 0; font-size: 0.8rem; color: var(--muted); border-bottom: 1px dashed var(--line); }
+</style>
+</head>
+<body>
+
+<p class="render-note">
+  Hand-rendered reproduction of <code>support-kb/src/routes/kb/incidents/4471-split/+page.svx</code>
+  through <code>runbook.svelte</code> + <code>ThreeCauseTable.svelte</code> — the export ships no
+  build tooling, so this reproduces the real layout CSS and component markup by hand, using the
+  numbers <code>ThreeCauseTable</code> computes from the actual data files. No visual content was
+  invented: every class, color token and markup shape is copied from the source files in this repo.
+</p>
+
+<div class="kb">
+  <header>
+    <a class="crumb" href="/kb">support desk · kb</a>
+    <h1>#4471, split · three problems, not one</h1>
+    <p class="meta">
+      <span>owner <b>support desk</b></span>
+      <span class="status">proposed</span>
+      <span>reviewed 2026-10-28 · 0 days ago</span>
+    </p>
+  </header>
+  <main>
+    <p>
+      <a href="/kb/incidents/4471">#4471</a> merged 412 reports and was marked known: one cause,
+      the shared parser, fix queued. <a href="/kb/incidents/4471">CauseTable</a> already shows a
+      second cause, <code>hint</code>, living in the same ticket with no ticket of its own.
+      Checking the 412 reports' own text against that split — not against either cause's
+      definition — turns up a third: 5 reports that describe a plain one-day difference, which a
+      day/month swap can never produce.
+    </p>
+
+    <aside class="warn">
+      Three problems were merged into one ticket because
+      <a href="/kb/decisions/0001-dedupe-by-subject">decision 0001</a> merges on subject line.
+      &ldquo;Wrong day on the invite&rdquo; and &ldquo;Date is wrong&rdquo; describe three
+      different bugs that all produce the same sentence.
+    </aside>
+
+    <h2>The real split</h2>
+
+    <p class="sum"><strong>412</strong> reports merged into #4471 · <strong>3</strong> real causes, not one</p>
+    <table>
+      <thead><tr><th>cause</th><th>reports</th><th>tenants</th><th>seen</th><th>ticket</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><code>parser</code> — shared parser reads month-first</td>
+          <td>374</td><td>11</td><td>2026-04-01 → 2026-10-04</td><td>its own issue</td>
+        </tr>
+        <tr>
+          <td><code>hint</code> — booking-v3's hint mismatches a day-first tenant</td>
+          <td>33</td><td>3</td><td>2026-04-17 → 2026-09-22</td><td>its own issue</td>
+        </tr>
+        <tr>
+          <td><code>drift</code> — one-day difference, not a day/month swap</td>
+          <td>5</td><td>5</td><td>2026-04-02 → 2026-10-04</td><td>its own issue</td>
+        </tr>
+      </tbody>
+    </table>
+    <p class="note">374 + 33 + 5 = 412. Every report counted once, in exactly one cause.</p>
+
+    <h2>Where each one went</h2>
+    <ul>
+      <li><strong>parser</strong> (374) — the parser fix already queued against #4471. Filed as
+        its own issue: <a href="https://github.com/kcprnoj/support-kb-4471/issues/1">kcprnoj/support-kb-4471#1</a>.</li>
+      <li><strong>hint</strong> (33) — booking-v3's date hint mismatches day-first tenants on the
+        <code>form</code> channel. Unticketed before now:
+        <a href="https://github.com/kcprnoj/support-kb-4471/issues/2">kcprnoj/support-kb-4471#2</a>.</li>
+      <li><strong>drift</strong> (5) — a one-day difference, not a swap. The desk's own
+        <code>oneDayMove</code> note in <code>desk-notes.json</code> already named these 5
+        reports; nobody gave them a ticket.
+        <a href="https://github.com/kcprnoj/support-kb-4471/issues/3">kcprnoj/support-kb-4471#3</a>.</li>
+    </ul>
+
+    <h2>Lessons</h2>
+    <ul>
+      <li>Dedupe by subject merges by what a report <em>sounds like</em>, not by what caused it.
+        Two bugs with the same symptom will share a ticket until someone checks the cause, not
+        just the count.</li>
+      <li>A desk note that says "these read differently" and files them anyway is a problem
+        waiting for a ticket, not a resolved footnote.</li>
+      <li>374 + 33 + 5 = 412. The original ticket's count was right; its one-cause story wasn't.</li>
+    </ul>
+
+    <p class="stamp">desk ref <b>DR-MMSN-MB40</b></p>
+  </main>
+  <footer>Pages are written by people. Tables and charts are built from data at render time.</footer>
+</div>
+
+</body>
+</html>

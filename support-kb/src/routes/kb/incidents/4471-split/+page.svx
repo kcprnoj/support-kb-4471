@@ -1,0 +1,50 @@
+---
+layout: runbook
+title: '#4471, split · three problems, not one'
+owner: support desk
+status: proposed
+reviewed: 2026-10-28
+signature: Kacper Nojszewski
+---
+
+<script>
+  import ThreeCauseTable from '#lib/kb/ThreeCauseTable.svelte';
+  import Callout from '#lib/kb/Callout.svelte';
+  import RenderStamp from '#lib/kb/RenderStamp.svelte';
+</script>
+
+[#4471](/kb/incidents/4471) merged 412 reports and was marked known: one cause, the shared
+parser, fix queued. [CauseTable](/kb/incidents/4471) already shows a second cause, `hint`,
+living in the same ticket with no ticket of its own. Checking the 412 reports' own text against
+that split — not against either cause's definition — turns up a third: 5 reports that describe
+a plain one-day difference, which a day/month swap can never produce.
+
+<Callout kind="warn">
+Three problems were merged into one ticket because [decision 0001](/kb/decisions/0001-dedupe-by-subject)
+merges on subject line. "Wrong day on the invite" and "Date is wrong" describe three different
+bugs that all produce the same sentence.
+</Callout>
+
+## The real split
+
+<ThreeCauseTable ticket={4471} />
+
+## Where each one went
+
+- **parser** (374) — the parser fix already queued against #4471. Filed as its own issue:
+  [kcprnoj/support-kb-4471#1](https://github.com/kcprnoj/support-kb-4471/issues/1).
+- **hint** (33) — booking-v3's date hint mismatches day-first tenants on the `form` channel.
+  Unticketed before now: [kcprnoj/support-kb-4471#2](https://github.com/kcprnoj/support-kb-4471/issues/2).
+- **drift** (5) — a one-day difference, not a swap. The desk's own `oneDayMove` note in
+  `desk-notes.json` already named these 5 reports; nobody gave them a ticket.
+  [kcprnoj/support-kb-4471#3](https://github.com/kcprnoj/support-kb-4471/issues/3).
+
+## Lessons
+
+- Dedupe by subject merges by what a report *sounds like*, not by what caused it. Two bugs with
+  the same symptom will share a ticket until someone checks the cause, not just the count.
+- A desk note that says "these read differently" and files them anyway is a problem waiting for
+  a ticket, not a resolved footnote.
+- 374 + 33 + 5 = 412. The original ticket's count was right; its one-cause story wasn't.
+
+<RenderStamp {signature} />
